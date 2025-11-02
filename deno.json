@@ -12,7 +12,6 @@
         ],
         "strict": true,
         "jsx": "preserve",
-        "module": "esnext",
         "moduleResolution": "bundler"
     },
     "tasks": {
