@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { EB_Garamond, Open_Sans } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "./AuthProvider";
-import NavMenu from "./NavBar.tsx";
+import NavMenu from "./NavBar";
 
 const ebGaramond = EB_Garamond({
     subsets: ["latin"],
