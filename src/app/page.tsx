@@ -1,5 +1,7 @@
 import { auth } from "@/auth";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
     const authenticated = await auth();
 
