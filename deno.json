@@ -24,6 +24,6 @@
         "start": "deno run -A --unstable-detect-cjs npm:next@latest start"
     },
     "imports": {
-        "@/": "./"
+        "@/": "./src/"
     }
 }
