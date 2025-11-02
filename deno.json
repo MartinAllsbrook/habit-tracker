@@ -25,7 +25,7 @@
     },
     "tasks": {
         "dev": "deno run -A --unstable-detect-cjs npm:next@latest dev",
-        "build": "deno run -A --unstable-detect-cjs npm:next@latest build",
+        "build": "deno install --allow-scripts=npm:@prisma/client,npm:sharp,npm:@prisma/engines,npm:prisma && deno run -A --unstable-detect-cjs npm:next@latest build",
         "start": "deno run -A --unstable-detect-cjs npm:next@latest start"
     },
     "imports": {
