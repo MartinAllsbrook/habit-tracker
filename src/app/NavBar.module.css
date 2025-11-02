@@ -1,0 +1,21 @@
+.nav {
+    display: flex;
+    background-color: #aaaaaa;
+    color: white;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+}
+
+.links {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.links li {
+    display: flex;
+    align-items: center;
+    margin-left: 1.5rem;
+}

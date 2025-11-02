@@ -3,10 +3,11 @@ body {
     overflow-x: hidden;
     background-color: #e3e3e3;
     color: black;
-    font-family: var(--font-eb-garamond)
+    font-family: var(--font-open-sans);
 }
 
 h1 {
+    font-family: var(--font-eb-garamond);
     font-style: italic;
     font-weight: 700;
 }

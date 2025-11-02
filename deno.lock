@@ -1,8 +1,8 @@
 {
   "version": "5",
   "specifiers": {
+    "npm:@auth/prisma-adapter@^2.11.1": "2.11.1_@prisma+client@6.18.0__prisma@6.18.0___typescript@5.9.3__typescript@5.9.3_prisma@6.18.0__typescript@5.9.3_typescript@5.9.3",
     "npm:@prisma/client@^6.18.0": "6.18.0_prisma@6.18.0__typescript@5.9.3_typescript@5.9.3",
-    "npm:@prisma/extension-accelerate@^2.0.2": "2.0.2_@prisma+client@6.18.0__prisma@6.18.0___typescript@5.9.3__typescript@5.9.3_prisma@6.18.0__typescript@5.9.3_typescript@5.9.3",
     "npm:@types/node@^24.9.2": "24.9.2",
     "npm:@types/react-dom@^19.2.2": "19.2.2_@types+react@19.2.2",
     "npm:@types/react@^19.2.2": "19.2.2",
@@ -26,6 +26,23 @@
         "oauth4webapi",
         "preact",
         "preact-render-to-string"
+      ]
+    },
+    "@auth/core@0.41.1_preact@10.24.3": {
+      "integrity": "sha512-t9cJ2zNYAdWMacGRMT6+r4xr1uybIdmYa49calBPeTqwgAFPV/88ac9TEvCR85pvATiSPt8VaNf+Gt24JIT/uw==",
+      "dependencies": [
+        "@panva/hkdf",
+        "jose",
+        "oauth4webapi",
+        "preact",
+        "preact-render-to-string"
+      ]
+    },
+    "@auth/prisma-adapter@2.11.1_@prisma+client@6.18.0__prisma@6.18.0___typescript@5.9.3__typescript@5.9.3_prisma@6.18.0__typescript@5.9.3_typescript@5.9.3": {
+      "integrity": "sha512-Ke7DXP0Fy0Mlmjz/ZJLXwQash2UkA4621xCM0rMtEczr1kppLc/njCbUkHkIQ/PnmILjqSPEKeTjDPsYruvkug==",
+      "dependencies": [
+        "@auth/core@0.41.1_preact@10.24.3",
+        "@prisma/client"
       ]
     },
     "@emnapi/runtime@1.6.0": {
@@ -259,12 +276,6 @@
       ],
       "scripts": true
     },
-    "@prisma/extension-accelerate@2.0.2_@prisma+client@6.18.0__prisma@6.18.0___typescript@5.9.3__typescript@5.9.3_prisma@6.18.0__typescript@5.9.3_typescript@5.9.3": {
-      "integrity": "sha512-yZK6/k7uOEFpEsKoZezQS1CKDboPtBCQ0NyI70e1Un8tDiRgg80iWGyjsJmRpps2ZIut3MroHP+dyR3wVKh8lA==",
-      "dependencies": [
-        "@prisma/client"
-      ]
-    },
     "@prisma/fetch-engine@6.18.0": {
       "integrity": "sha512-TdaBvTtBwP3IoqVYoGIYpD4mWlk0pJpjTJjir/xLeNWlwog7Sl3bD2J0jJ8+5+q/6RBg+acb9drsv5W6lqae7A==",
       "dependencies": [
@@ -413,7 +424,7 @@
     "next-auth@5.0.0-beta.30_next@16.0.1__react@19.2.0__react-dom@19.2.0___react@19.2.0_react@19.2.0_react-dom@19.2.0__react@19.2.0": {
       "integrity": "sha512-+c51gquM3F6nMVmoAusRJ7RIoY0K4Ts9HCCwyy/BRoe4mp3msZpOzYMyb5LAYc1wSo74PMQkGDcaghIO7W6Xjg==",
       "dependencies": [
-        "@auth/core",
+        "@auth/core@0.41.0_preact@10.24.3",
         "next",
         "react"
       ]
@@ -599,8 +610,8 @@
   "workspace": {
     "packageJson": {
       "dependencies": [
+        "npm:@auth/prisma-adapter@^2.11.1",
         "npm:@prisma/client@^6.18.0",
-        "npm:@prisma/extension-accelerate@^2.0.2",
         "npm:@types/node@^24.9.2",
         "npm:@types/react-dom@^19.2.2",
         "npm:@types/react@^19.2.2",

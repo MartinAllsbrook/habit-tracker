@@ -4,6 +4,9 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// Update Schema: "deno run -A npm:prisma migrate dev --name [name]"
+// More info / tut: https://www.prisma.io/docs/guides/deno-integration
+
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
