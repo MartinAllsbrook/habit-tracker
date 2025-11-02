@@ -1,4 +1,4 @@
-import { auth } from "@/auth.ts";
+import { auth } from "@/auth";
 
 export default async function Home() {
     const authenticated = await auth();

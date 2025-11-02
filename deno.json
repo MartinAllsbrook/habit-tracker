@@ -4,6 +4,11 @@
         "unsafe-proto",
         "sloppy-imports"
     ],
+    "lint": {
+        "rules": {
+            "exclude": ["no-sloppy-imports"]
+        }
+    },
     "fmt": {
         "indentWidth": 4
     },

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Dino } from "../types.ts";
+import { Dino } from "../types";
 import Link from "next/link";   
 
 type RouteParams = { params: Promise<{ dinosaur: string }> };

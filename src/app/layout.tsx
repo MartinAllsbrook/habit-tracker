@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { EB_Garamond } from "next/font/google";
 import "./globals.css";
-import AuthProvider from "./AuthProvider.tsx";
+import AuthProvider from "./AuthProvider";
 
 const ebGaramond = EB_Garamond({
     subsets: ["latin"],
