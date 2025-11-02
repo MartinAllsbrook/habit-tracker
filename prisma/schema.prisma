@@ -50,13 +50,33 @@ model Session {
 model User {
   id            String    @id @default(cuid())
   name          String?
-  bio           String? @db.Text
-  age           Int?
   email         String?   @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
+  habits        Habit[]     // User has many habits
+}
+
+model Habit {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String   // e.g., "Exercise", "Read", "Meditate"
+  description String?
+  createdAt   DateTime @default(now())
+  entries     HabitEntry[]  // Each habit has many daily entries
+}
+
+model HabitEntry {
+  id          String   @id @default(cuid())
+  habitId     String
+  habit       Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  date        DateTime @db.Date  // The day this entry is for
+  completed   Boolean  @default(false)
+  notes       String?
+  
+  @@unique([habitId, date])  // Prevent duplicate entries for same habit on same day
 }
 
 model VerificationToken {
