@@ -11,7 +11,9 @@
             "esnext"
         ],
         "strict": true,
-        "jsx": "preserve"
+        "jsx": "preserve",
+        "module": "esnext",
+        "moduleResolution": "bundler"
     },
     "tasks": {
         "dev": "deno run -A --unstable-detect-cjs npm:next@latest dev",
