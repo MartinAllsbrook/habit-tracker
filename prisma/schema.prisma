@@ -46,11 +46,18 @@ model User {
   sessions      Session[]
 }
 
+enum HabitType {
+  BOOLEAN
+  VALUE
+}
+
 model Habit {
   id          String       @id @default(cuid())
   userId      String
   name        String
   description String?
+  type        HabitType    @default(BOOLEAN)
+  unit        String?      // e.g., "kilometers", "minutes", "steps" (null for boolean habits)
   createdAt   DateTime     @default(now())
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   entries     HabitEntry[]
@@ -60,7 +67,7 @@ model HabitEntry {
   id        String   @id @default(cuid())
   habitId   String
   date      DateTime @db.Date
-  completed Boolean  @default(false)
+  value     Float?   // For value-based habits (null for boolean habits)
   notes     String?
   habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
 

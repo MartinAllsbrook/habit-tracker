@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./NavBar.module.css";
-import ProfileButton from "../components/ProfileButton";
+import ProfileButton from "../components/ProfileButton.tsx";
 
 export default function NavBar() {
     return (

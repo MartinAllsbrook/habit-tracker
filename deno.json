@@ -2,12 +2,11 @@
     "nodeModulesDir": "auto",
     "unstable": [
         "unsafe-proto",
-        "sloppy-imports",
         "worker-options"
     ],
     "lint": {
         "rules": {
-            "exclude": ["no-sloppy-imports"]
+
         }
     },
     "fmt": {
@@ -28,9 +27,12 @@
         "dev": "deno run -A --unstable-detect-cjs --unstable-worker-options npm:next@latest dev",
         "install": "deno install --allow-scripts=npm:@prisma/client,npm:sharp,npm:@prisma/,npm:prisma",
         "build": "deno run -A npm:prisma generate && deno run -A --unstable-detect-cjs --unstable-worker-options npm:next@latest build",
-        "start": "deno run -A --unstable-detect-cjs --unstable-worker-options npm:next@latest start"
+        "start": "deno run -A --unstable-detect-cjs --unstable-worker-options npm:next@latest start",
+        "prisma": "deno run -A npm:prisma migrate dev && deno run -A npm:prisma generate"
     },
     "imports": {
-        "@/": "./src/"
+        "@/": "./src/",
+
+        "prisma/": "./src/generated/prisma/"
     }
 }

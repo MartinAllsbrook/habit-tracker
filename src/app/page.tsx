@@ -1,10 +1,10 @@
-import { auth } from "@/auth";
+import { auth } from "@/auth.ts";
 import DailyEntries from "./DailyEntries.tsx";
 
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-    const authenticated = await auth();
+    const _authenticated = await auth();
 
     return (
         <main>

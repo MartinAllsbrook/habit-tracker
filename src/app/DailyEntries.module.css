@@ -4,24 +4,3 @@
     margin: 0px;
 }
 
-.dailyLog li {
-    list-style: none;
-    margin: 0px;
-    padding: 0px;
-
-    width: 10rem;
-    display: flex;
-    flex-direction: column;
-}
-
-
-.dailyLog li div {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-
-    border: 1px solid #333;
-    margin: 0px;
-    padding: 0px;
-}
