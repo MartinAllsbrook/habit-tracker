@@ -28,11 +28,10 @@
         "install": "deno install --allow-scripts=npm:@prisma/client,npm:sharp,npm:@prisma/,npm:prisma",
         "build": "deno run -A npm:prisma generate && deno run -A --unstable-detect-cjs --unstable-worker-options npm:next@latest build",
         "start": "deno run -A --unstable-detect-cjs --unstable-worker-options npm:next@latest start",
-        "prisma": "deno run -A npm:prisma migrate dev && deno run -A npm:prisma generate"
+        "prisma": "deno run -A npm:prisma migrate dev && deno run -A npm:prisma generate",
+        "check": "deno check src"        
     },
     "imports": {
-        "@/": "./src/",
-
-        "prisma/": "./src/generated/prisma/"
+        "@/": "./src/"
     }
 }

@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma.ts";
 import { auth } from "@/auth.ts";
 import Link from "next/link";
 import styles from "./DailyEntries.module.css";
-import { HabitEntry } from "prisma/client.ts";
+import { HabitEntry } from "@/generated/prisma/client.ts";
 import HabitBox from "@/components/habits/HabitBox.tsx";
 
 export default async function DailyEntries() {

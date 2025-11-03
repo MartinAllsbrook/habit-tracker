@@ -1,5 +1,5 @@
 // lib/prisma.ts
-import { PrismaClient } from "prisma/client.ts";
+import { PrismaClient } from "@/generated/prisma/client.ts";
 import process from "node:process";
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };

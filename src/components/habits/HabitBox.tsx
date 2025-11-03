@@ -1,6 +1,6 @@
 "use client";
 
-import { Habit, HabitEntry } from "prisma/client.ts";
+import { Habit, HabitEntry } from "@/generated/prisma/client.ts";
 import styles from "./HabitBox.module.css";
 
 interface Props {
