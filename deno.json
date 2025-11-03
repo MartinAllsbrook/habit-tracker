@@ -26,7 +26,7 @@
     },
     "tasks": {
         "dev": "deno run -A --unstable-detect-cjs --unstable-worker-options npm:next@latest dev",
-        "install": "deno install --allow-scripts=npm:@prisma/client,npm:sharp,npm:@prisma/engines,npm:prisma",
+        "install": "deno install --allow-scripts=npm:@prisma/client,npm:sharp,npm:@prisma/,npm:prisma",
         "build": "deno run -A npm:prisma generate && deno run -A --unstable-detect-cjs --unstable-worker-options npm:next@latest build",
         "start": "deno run -A --unstable-detect-cjs --unstable-worker-options npm:next@latest start"
     },
