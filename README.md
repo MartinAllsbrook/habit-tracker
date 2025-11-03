@@ -1,17 +1,14 @@
-# Next.js with Deno Tutorial
+# Martin's Habit Tracker
+An app to to track all your habits! Built with Next.js and [Deployed on Deno](https://habit-tracker.martinallsbrook.deno.net/)
 
-This project demonstrates how to run a [Next.js](https://nextjs.org) application
-using [Deno](https://deno.com). It's a complete tutorial example showing how to
-set up, develop, and deploy a Next.js app in the Deno runtime environment.
-
-## Make it your own!
+<!-- ## Make it your own!
 
 You can deploy your own version of this Next.js app to Deno Deploy immediately.
 Just click the button to clone and deploy.
 
-[![Deploy on Deno](https://deno.com/button)](https://app.deno.com/new?clone=https://github.com/denoland/tutorial-with-next)
+[![Deploy on Deno](https://deno.com/button)](https://app.deno.com/new?clone=https://github.com/denoland/tutorial-with-next) -->
 
-## About This Tutorial
+<!-- ## About This Tutorial
 
 This tutorial project shows you how to:
 
@@ -22,23 +19,35 @@ This tutorial project shows you how to:
 - Deploy your Next.js app to Deno Deploy
 
 For the complete step-by-step of this tutorial, visit:
-[**Next.js Tutorial on Deno Docs**](https://docs.deno.com/examples/next_tutorial/)
+[**Next.js Tutorial on Deno Docs**](https://docs.deno.com/examples/next_tutorial/) -->
+
+## Tooling:
+
+- **Deno** - Runtime
+- **Next.js** - Framework
+- **React** - UI Rendering (from Next)
+- **Prisma** - Postgres ORM
+- **Auth.js** - Authentication
+- **Neon** - Database
 
 ## Getting Started
 
-First, run the development server:
+First, setup the .env file with:
 
-```bash
-deno run dev
+```
+GITHUB_ID=[get from your github]
+GITHUB_SECRET=[get from your github app]
+NEXTAUTH_SECRET=[random 32 char string]
+DATABASE_URL=[get from your database, i.e. neon]
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the
-result.
+Then, run the development server with `deno run dev`, this should also install all the dependencies.
 
-You can start editing the page by modifying `app/page.tsx`. The page
-auto-updates as you edit the file.
+You may also have to run `deno run -A npm:prisma migrate dev --name [migration name]` to push prisma's schema to your database.
 
-## Deploy on Deno
+Finally, open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+<!-- ## Deploy on Deno
 
 You can deploy this project on Deno Deploy! To get started, follow these steps:
 
@@ -46,4 +55,4 @@ You can deploy this project on Deno Deploy! To get started, follow these steps:
 2. Click on "New Project".
 3. Select your GitHub repository.
 4. Follow the prompts to deploy your Next.js application.
-5. Once deployed, you will receive a URL where your application is live.
+5. Once deployed, you will receive a URL where your application is live. -->
