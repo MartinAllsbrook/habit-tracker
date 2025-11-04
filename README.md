@@ -1,7 +1,7 @@
 # Martin's Habit Tracker
 An app to to track all your habits! Built with Next.js and [Deployed on Deno](https://habit-tracker.martinallsbrook.deno.net/)
 
-I'm forcing a lot of things dynamic right now because of an error with static pages on Deno Deploy. This hasent fully fixed the issue any many of my prod builds are failing, but the app does run locally. Hopefully this can be resolved or I'll move the project off of the Deno runtime or something.
+I'm runnig into an error with Deno Deploy and Next static pages, so many of my prod builds are failing, but the app does run locally. I'm forcing a lot of things dynamic right now to try and mitigate the issue but this hasent fully fixed it. Hopefully I can resolve it or I'll move the project off of the Deno runtime or something. :0
 
 ## Tooling:
 
