@@ -10,8 +10,9 @@ interface NewHabitEntry {
 
 export async function POST(
     request: NextRequest,
-    { params }: { params: { habitId: string } }
+    { params }: { params: Promise<{ habitId: string }> }
 ) {
+    const { habitId } = await params;
     try {
         // Authenticate the user
         const session = await auth()
@@ -23,8 +24,6 @@ export async function POST(
         }
 
         const userId = session.user.id
-        const { habitId } = params
-
         // Verify the habit exists and belongs to the user
         const habit = await prisma.habit.findUnique({
             where: { id: habitId },

@@ -9,8 +9,9 @@ interface UpdateHabitEntry {
 
 export async function PATCH(
     request: NextRequest,
-    { params }: { params: { habitId: string; entryId: string } }
+    { params }: { params: Promise<{ habitId: string; entryId: string }> }
 ) {
+    const { habitId, entryId } = await params;
     try {
         // Authenticate the user
         const session = await auth()
@@ -22,8 +23,6 @@ export async function PATCH(
         }
 
         const userId = session.user.id
-        const { habitId, entryId } = params
-
         // Verify the habit exists, belongs to the user, and get its type
         const habit = await prisma.habit.findUnique({
             where: { id: habitId },
@@ -122,8 +121,9 @@ export async function PATCH(
 
 export async function DELETE(
     _request: NextRequest,
-    { params }: { params: { habitId: string; entryId: string } }
+    { params }: { params: Promise<{ habitId: string; entryId: string }> }
 ) {
+    const { habitId, entryId } = await params;
     try {
         // Authenticate the user
         const session = await auth()
@@ -135,8 +135,6 @@ export async function DELETE(
         }
 
         const userId = session.user.id
-        const { habitId, entryId } = params
-
         // Verify the habit exists and belongs to the user
         const habit = await prisma.habit.findUnique({
             where: { id: habitId },
