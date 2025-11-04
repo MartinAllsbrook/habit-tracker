@@ -1,12 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-// Update Schema: "deno run -A npm:prisma migrate dev --name [name]"
-// More info / tut: https://www.prisma.io/docs/guides/deno-integration
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -17,24 +8,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//#region NextAuth Schema
-
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String?
+  access_token             String?
+  expires_at               Int?
   refresh_token_expires_in Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token_type               String?
+  scope                    String?
+  id_token                 String?
+  session_state            String?
+  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -54,29 +42,36 @@ model User {
   emailVerified DateTime?
   image         String?
   accounts      Account[]
+  habits        Habit[]
   sessions      Session[]
-  habits        Habit[]     // User has many habits
+}
+
+enum HabitType {
+  BOOLEAN
+  VALUE
 }
 
 model Habit {
-  id          String   @id @default(cuid())
+  id          String       @id @default(cuid())
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name        String   // e.g., "Exercise", "Read", "Meditate"
+  name        String
   description String?
-  createdAt   DateTime @default(now())
-  entries     HabitEntry[]  // Each habit has many daily entries
+  type        HabitType    @default(BOOLEAN)
+  unit        String?      // e.g., "kilometers", "minutes", "steps" (null for boolean habits)
+  createdAt   DateTime     @default(now())
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entries     HabitEntry[]
 }
 
 model HabitEntry {
-  id          String   @id @default(cuid())
-  habitId     String
-  habit       Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
-  date        DateTime @db.Date  // The day this entry is for
-  completed   Boolean  @default(false)
-  notes       String?
-  
-  @@unique([habitId, date])  // Prevent duplicate entries for same habit on same day
+  id        String   @id @default(cuid())
+  habitId   String
+  date      DateTime @db.Date
+  value     Float?   // For value-based habits (null for boolean habits)
+  notes     String?
+  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, date])
 }
 
 model VerificationToken {
@@ -86,5 +81,3 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
-
-//#endregion

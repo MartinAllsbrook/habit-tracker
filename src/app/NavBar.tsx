@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./NavBar.module.css";
-import ProfileButton from "../components/ProfileButton";
+import ProfileButton from "../components/ProfileButton.tsx";
 
 export default function NavBar() {
     return (
@@ -16,13 +16,7 @@ export default function NavBar() {
             </Link>
             <ul className={styles.links}>
                 <li>
-                    <Link href="/about">About</Link>
-                </li>
-                <li>
-                    <Link href="/blog">Blog</Link>
-                </li>
-                <li>
-                    <Link href="/users">Users</Link>
+                    <Link href="/habits">Manage Habits</Link>
                 </li>
                 <li>
                     <ProfileButton/>

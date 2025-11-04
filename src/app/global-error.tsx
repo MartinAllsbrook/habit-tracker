@@ -1,9 +1,7 @@
-'use client';
-
-export const dynamic = 'force-dynamic';
+"use client";
 
 export default function GlobalError({
-    error: _error,
+    error,
     reset,
 }: {
     error: Error & { digest?: string };
@@ -13,8 +11,11 @@ export default function GlobalError({
         <html>
             <body>
                 <h2>Something went wrong!</h2>
+                <p>{error?.message || "An unexpected error occurred"}</p>
                 <button type="button" onClick={() => reset()}>Try again</button>
             </body>
         </html>
     );
 }
+
+
