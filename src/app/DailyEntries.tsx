@@ -46,6 +46,7 @@ export default async function DailyEntries() {
                             key={habit.id} 
                             habit={habit} 
                             entry={entriesByHabitId[habit.id] || undefined} 
+                            date={today}
                         />
                     )}
                 </ul>
