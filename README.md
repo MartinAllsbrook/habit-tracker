@@ -1,25 +1,7 @@
 # Martin's Habit Tracker
 An app to to track all your habits! Built with Next.js and [Deployed on Deno](https://habit-tracker.martinallsbrook.deno.net/)
 
-<!-- ## Make it your own!
-
-You can deploy your own version of this Next.js app to Deno Deploy immediately.
-Just click the button to clone and deploy.
-
-[![Deploy on Deno](https://deno.com/button)](https://app.deno.com/new?clone=https://github.com/denoland/tutorial-with-next) -->
-
-<!-- ## About This Tutorial
-
-This tutorial project shows you how to:
-
-- Set up a Next.js project
-- Run your project on Deno
-- Add a simple backend API route
-- Update the frontend to fetch data from the backend
-- Deploy your Next.js app to Deno Deploy
-
-For the complete step-by-step of this tutorial, visit:
-[**Next.js Tutorial on Deno Docs**](https://docs.deno.com/examples/next_tutorial/) -->
+I'm forcing a lot of things dynamic right now because of an error with static pages on Deno Deploy. Hopefully this can be resolved or I'll move the project off of the Deno runtime or something.
 
 ## Tooling:
 
