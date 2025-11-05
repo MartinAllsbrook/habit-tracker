@@ -1,0 +1,11 @@
+.weeklyGrid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+}
+
+.gridItem {
+    border: 1px solid #ccc;
+    padding: 8px;
+    background: #fff;
+    text-align: center;
+}
