@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { EB_Garamond, Open_Sans } from "next/font/google";
 import "./globals.css";
-import AuthProvider from "./AuthProvider";
-import NavMenu from "./NavBar";
+import AuthProvider from "./AuthProvider.tsx";
+import NavMenu from "./NavBar.tsx";
+
+export const dynamic = 'force-dynamic';
 
 const ebGaramond = EB_Garamond({
     subsets: ["latin"],
