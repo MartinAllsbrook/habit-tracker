@@ -19,17 +19,27 @@ export default async function DailyEntries() {
         where: { userId }
     })
 
-    const entriesByHabitId: Record<string, HabitEntry | null> = {};
+    const entriesByHabitId: Record<string, HabitEntry[]> = {};
+    const startOfDay = new Date(today);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(today);
+    endOfDay.setHours(23, 59, 59, 999);
+    
     for (const habit of userHabits) {
-        const entry = await prisma.habitEntry.findUnique({
+        // Get all entries for today
+        const entries = await prisma.habitEntry.findMany({
             where: {
-                habitId_date: {
-                    habitId: habit.id,
-                    date: new Date(today),
+                habitId: habit.id,
+                date: {
+                    gte: startOfDay,
+                    lte: endOfDay,
                 },
             },
+            orderBy: {
+                date: 'desc',
+            },
         });
-        entriesByHabitId[habit.id] = entry;
+        entriesByHabitId[habit.id] = entries;
     }
     
     return (
@@ -45,7 +55,7 @@ export default async function DailyEntries() {
                         <HabitBox 
                             key={habit.id} 
                             habit={habit} 
-                            entry={entriesByHabitId[habit.id] || undefined} 
+                            entries={entriesByHabitId[habit.id] || []} 
                             date={today}
                         />
                     )}

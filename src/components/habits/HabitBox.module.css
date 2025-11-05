@@ -57,13 +57,13 @@
 .valueHabit {
     display: flex;
     align-items: center;
-    justify-content: center;
-    margin-bottom: 0.5rem;
+    gap: 0.7rem;
     width: 100%;
 }
 
 .valueInput {
-    width: 2.8rem;
+    flex: 1;
+    min-width: 0; /* Allow input to shrink below its content size */
     height: 2.8rem;
     background: #fff;
     border: 3px solid #111;
@@ -72,29 +72,40 @@
     font-size: 1.3rem;
     text-align: center;
     color: #111;
-    margin-right: 0.7rem;
     padding: 0;
 }
 
-.clearBtn {
+/* Add button for value habits */
+.addBtn {
+    flex-shrink: 0; /* Prevent button from being squished */
+    width: 2.8rem;
     height: 2.8rem;
-    padding: 0 1.1rem;
-    background: none;
+    background: #fff;
     border: 3px solid #111;
     border-radius: 1.1rem/1.2rem;
-    color: #111;
-    font-size: 1rem;
-    cursor: pointer;
     box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    font-size: 2rem;
+    font-weight: 300;
+    color: #111;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
 }
 
-.clearBtn:disabled {
+.addBtn:hover:not(:disabled) {
+    background: #f3f3f3;
+}
+
+.addBtn:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.addBtn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-}
-
-.clearBtn:hover:not(:disabled) {
-    background: #f3f3f3;
 }
 
 /* Boolean habit squircle button */
@@ -133,4 +144,17 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+}
+
+/* Entries list below habit box */
+.entriesList {
+    list-style: none;
+    padding: 0.5rem 0 0 0;
+    margin: 0 1rem 1rem 1rem;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.entriesList li {
+    padding: 0.25rem 0;
 }

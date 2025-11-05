@@ -3,7 +3,7 @@ import { auth } from "@/auth.ts"
 import { prisma } from "@/lib/prisma.ts"
 
 interface NewHabitEntry {
-    date: string // ISO date string (YYYY-MM-DD)
+    date: string // ISO datetime string (e.g., "2025-11-04T14:30:00Z" or "2025-11-04")
     value?: number | null // For value-based habits
     notes?: string | null
 }
@@ -91,14 +91,6 @@ export async function POST(
         return Response.json(habitEntry, { status: 201 })
     } catch (error) {
         console.error("Error creating habit entry:", error)
-        
-        // Handle unique constraint violation (duplicate entry for same date)
-        if (error instanceof Error && error.message.includes("Unique constraint")) {
-            return Response.json(
-                { error: "An entry already exists for this date" },
-                { status: 409 }
-            )
-        }
 
         return Response.json(
             { error: "Internal server error" },

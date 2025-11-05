@@ -66,12 +66,10 @@ model Habit {
 model HabitEntry {
   id        String   @id @default(cuid())
   habitId   String
-  date      DateTime @db.Date
+  date      DateTime @default(now())
   value     Float?   // For value-based habits (null for boolean habits)
   notes     String?
   habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
-
-  @@unique([habitId, date])
 }
 
 model VerificationToken {
