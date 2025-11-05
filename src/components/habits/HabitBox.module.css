@@ -1,15 +1,124 @@
-.squircleBtn {
+/* Hide number input spinners */
+.valueInput::-webkit-outer-spin-button,
+.valueInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.valueInput[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* Main habit box container */
+.habitBox {
+    list-style: none;
+    margin: 1rem;
+    padding: 1.2rem;
+    width: 13rem;
+    min-height: 16rem;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    background: #fff;
+    border-radius: 1rem;
+    border: 3px solid #111;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.habitBox:hover {
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+}
+
+/* Header section */
+.headerContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.habitBox h2 {
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin: 0.5rem 0 0 0;
+    font-family: var(--font-eb-garamond);
+    color: #111;
+    letter-spacing: 0.01em;
+}
+
+.habitBox p {
+    font-size: 0.98rem;
+    color: #222;
+    margin: 0.25rem 0 0.7rem 0;
+}
+
+/* Value habit input section */
+.valueHabit {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    width: 100%;
+}
+
+.valueInput {
+    flex: 1;
+    min-width: 0; /* Allow input to shrink below its content size */
+    height: 2.8rem;
+    background: #fff;
+    border: 3px solid #111;
+    border-radius: 1.1rem/1.2rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    font-size: 1.3rem;
+    text-align: center;
+    color: #111;
+    padding: 0;
+}
+
+/* Add button for value habits */
+.addBtn {
+    flex-shrink: 0; /* Prevent button from being squished */
+    width: 2.8rem;
+    height: 2.8rem;
+    background: #fff;
+    border: 3px solid #111;
+    border-radius: 1.1rem/1.2rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    font-size: 2rem;
+    font-weight: 300;
+    color: #111;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+}
+
+.addBtn:hover:not(:disabled) {
+    background: #f3f3f3;
+}
+
+.addBtn:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.addBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Boolean habit squircle button */
+.squircleBtn {
+    display: flex;
     align-items: center;
     justify-content: center;
     background: none;
     border: none;
-    padding: 0.5rem 0;
+    padding: 0;
     cursor: pointer;
-    outline: none;
-    margin: 0 auto 0.5rem auto;
-    /* No grow/shrink effect */
+    height: 2.8rem;
+    width: 100%;
 }
 
 .squircleOuter {
@@ -37,116 +146,15 @@
     transform: translate(-50%, -50%);
 }
 
-.squircleLabel {
-    font-size: 1.08rem;
-    font-weight: 500;
-    color: #444;
-    letter-spacing: 0.01em;
-    user-select: none;
-}
-.completedBtn {
-    background: linear-gradient(90deg, #4f8cff 60%, #38d9a9 100%);
-    color: #fff;
-    border: none;
-    border-radius: 0.7rem;
-    padding: 0.6rem 1.2rem;
-    font-weight: 600;
-    font-size: 1rem;
-    box-shadow: 0 2px 8px rgba(79,140,255,0.10);
-    cursor: pointer;
-    transition: background 0.2s, transform 0.2s;
-    outline: none;
-    margin-top: auto;
-}
-
-.completedBtn:hover {
-    background: linear-gradient(90deg, #38d9a9 60%, #4f8cff 100%);
-    transform: scale(1.04);
-}
-
-.incompleteBtn {
-    background: #f3f3f3;
-    color: #444;
-    border: 2px solid #4f8cff;
-    border-radius: 0.7rem;
-    padding: 0.6rem 1.2rem;
-    font-weight: 500;
-    font-size: 1rem;
-    box-shadow: 0 2px 8px rgba(79,140,255,0.06);
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s, transform 0.2s;
-    outline: none;
-    margin-top: auto;
-}
-
-.incompleteBtn:hover {
-    background: #e6f0ff;
-    border-color: #38d9a9;
-    transform: scale(1.04);
-}
-
-.habitBox {
+/* Entries list below habit box */
+.entriesList {
     list-style: none;
-    margin: 1rem;
-    padding: 1.2rem;
-    width: 13rem;
-    min-height: 16rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    background: #fff;
-    border-radius: 1rem;
-    border: 3px solid #111;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    padding: 0.5rem 0 0 0;
+    margin: 0 1rem 1rem 1rem;
+    font-size: 0.9rem;
+    color: #555;
 }
 
-.habitBox:hover {
-    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-    /* No grow/shrink effect */
-}
-
-
-.habitBox div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    border: none;
-    margin-bottom: 1rem;
-    padding: 0;
-}
-
-.habitBox h2 {
-    font-weight: 700;
-    font-size: 1.5rem;
-    margin: 0.5rem 0;
-    font-family: var(--font-eb-garamond);
-    color: #111;
-    letter-spacing: 0.01em;
-}
-
-.habitBox p {
-    font-size: 0.98rem;
-    color: #222;
-    margin: 0.25rem 0 0.7rem 0;
-}
-
-.habitBox label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 1rem;
-    color: #444;
-    cursor: pointer;
-    margin-top: auto;
-}
-
-.habitBox input[type="checkbox"] {
-    accent-color: #4f8cff;
-    width: 1.1rem;
-    height: 1.1rem;
-    border-radius: 0.3rem;
-    border: 1px solid #bbb;
-    transition: accent-color 0.2s;
+.entriesList li {
+    padding: 0.25rem 0;
 }

@@ -2,8 +2,13 @@ import { prisma } from "@/lib/prisma.ts";
 import { auth } from "@/auth.ts";
 import Link from "next/link";
 import styles from "./DailyEntries.module.css";
-import { HabitEntry } from "@/generated/prisma/client.ts";
+import { BooleanHabitEntry, TimedHabitEntry } from "@/generated/prisma/client.ts";
 import HabitBox from "@/components/habits/HabitBox.tsx";
+
+export type HabitEntries = {
+    booleanEntry?: BooleanHabitEntry;
+    timedEntries: TimedHabitEntry[];
+};
 
 export default async function DailyEntries() {
     const session = await auth();
@@ -19,17 +24,46 @@ export default async function DailyEntries() {
         where: { userId }
     })
 
-    const entriesByHabitId: Record<string, HabitEntry | null> = {};
+    const entriesByHabitId: Record<string, HabitEntries> = {};
+    const todayDate = new Date(today);
+    const startOfDay = new Date(today);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(today);
+    endOfDay.setHours(23, 59, 59, 999);
+    
     for (const habit of userHabits) {
-        const entry = await prisma.habitEntry.findUnique({
-            where: {
-                habitId_date: {
-                    habitId: habit.id,
-                    date: new Date(today),
+        if (habit.type === 'BOOLEAN') {
+            // For boolean habits, get the single entry for today (date only)
+            const booleanEntry = await prisma.booleanHabitEntry.findUnique({
+                where: {
+                    habitId_date: {
+                        habitId: habit.id,
+                        date: todayDate,
+                    },
                 },
-            },
-        });
-        entriesByHabitId[habit.id] = entry;
+            });
+            entriesByHabitId[habit.id] = {
+                booleanEntry: booleanEntry || undefined,
+                timedEntries: [],
+            };
+        } else {
+            // For VALUE and TALLY habits, get all timestamped entries for today
+            const timedEntries = await prisma.timedHabitEntry.findMany({
+                where: {
+                    habitId: habit.id,
+                    timestamp: {
+                        gte: startOfDay,
+                        lte: endOfDay,
+                    },
+                },
+                orderBy: {
+                    timestamp: 'desc',
+                },
+            });
+            entriesByHabitId[habit.id] = {
+                timedEntries,
+            };
+        }
     }
     
     return (
@@ -45,7 +79,8 @@ export default async function DailyEntries() {
                         <HabitBox 
                             key={habit.id} 
                             habit={habit} 
-                            entry={entriesByHabitId[habit.id] || undefined} 
+                            entries={entriesByHabitId[habit.id] || { timedEntries: [] }} 
+                            date={today}
                         />
                     )}
                 </ul>

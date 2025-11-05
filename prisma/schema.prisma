@@ -49,29 +49,41 @@ model User {
 enum HabitType {
   BOOLEAN
   VALUE
+  TALLY
 }
 
 model Habit {
-  id          String       @id @default(cuid())
-  userId      String
-  name        String
-  description String?
-  type        HabitType    @default(BOOLEAN)
-  unit        String?      // e.g., "kilometers", "minutes", "steps" (null for boolean habits)
-  createdAt   DateTime     @default(now())
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  entries     HabitEntry[]
+  id             String              @id @default(cuid())
+  userId         String
+  name           String
+  description    String?
+  type           HabitType           @default(BOOLEAN)
+  unit           String?             // e.g., "kilometers", "minutes", "steps" (null for boolean/tally habits)
+  createdAt      DateTime            @default(now())
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  booleanEntries BooleanHabitEntry[]
+  timedEntries   TimedHabitEntry[]
 }
 
-model HabitEntry {
+// For BOOLEAN habits - one per day
+model BooleanHabitEntry {
+  id      String   @id @default(cuid())
+  habitId String
+  date    DateTime @db.Date // Date only, no time
+  notes   String?
+  habit   Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, date]) // Enforces one entry per day
+}
+
+// For VALUE and TALLY habits - multiple per day with timestamps
+model TimedHabitEntry {
   id        String   @id @default(cuid())
   habitId   String
-  date      DateTime @db.Date
-  value     Float?   // For value-based habits (null for boolean habits)
+  timestamp DateTime @default(now()) // Full timestamp
+  value     Float? // Required for VALUE, null for TALLY
   notes     String?
   habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
-
-  @@unique([habitId, date])
 }
 
 model VerificationToken {
