@@ -1,25 +1,28 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Habit, HabitEntry } from "@/generated/prisma/client.ts";
+import { Habit, BooleanHabitEntry, TimedHabitEntry } from "@/generated/prisma/client.ts";
 import styles from "./HabitBox.module.css";
 
 interface Props {
     habit: Habit;
-    entries: HabitEntry[];
-    date: string; // Current date for the entry
+    entries: {
+        booleanEntry?: BooleanHabitEntry;
+        timedEntries: TimedHabitEntry[];
+    };
+    date: string; // Current date for the entry (YYYY-MM-DD)
 }
 
 export default function HabitBox({ habit, entries, date }: Props) {
     const { name, description, type } = habit;
     
-    // For boolean habits, check if there's at least one entry today
-    const booleanEntry = type === "BOOLEAN" ? entries[0] : undefined;
+    // For boolean habits
+    const booleanEntry = entries.booleanEntry;
     
     // Optimistic UI state
     const [completed, setCompleted] = useState(!!booleanEntry);
     const [entryId, setEntryId] = useState(booleanEntry?.id);
-    const [localEntries, setLocalEntries] = useState(entries);
+    const [localEntries, setLocalEntries] = useState(entries.timedEntries);
     const [inputValue, setInputValue] = useState<number>(1); // Default value for new entries
     
     // Debounce management for boolean habits only
@@ -51,24 +54,29 @@ export default function HabitBox({ habit, entries, date }: Props) {
         }
     };
     
-    const addValueEntry = async () => {
+    const addTimedEntry = async () => {
         try {
-            // Don't create entry if value is 0 or negative
-            if (inputValue <= 0) return;
+            // For VALUE habits, don't create entry if value is 0 or negative
+            if (type === 'VALUE' && inputValue <= 0) return;
             
-            // Create new entry with the input value at current time
+            // Create new entry with the input value (for VALUE) or without (for TALLY) at current time
             const response = await fetch(`/api/habits/${habit.id}/entries`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
-                    date: new Date().toISOString(),
-                    value: inputValue 
+                    timestamp: new Date().toISOString(),
+                    value: type === 'VALUE' ? inputValue : null
                 })
             });
             const newEntry = await response.json();
             
             // Add to local state optimistically
             setLocalEntries([newEntry, ...localEntries]);
+            
+            // Reset input value for VALUE habits
+            if (type === 'VALUE') {
+                setInputValue(1);
+            }
         } catch (error) {
             console.error('Error adding entry:', error);
             // TODO: Add error handling
@@ -99,8 +107,8 @@ export default function HabitBox({ habit, entries, date }: Props) {
         timeoutRef.current = setTimeout(() => syncBooleanWithServer(newCompleted, entryId), DEBOUNCE_MS);
     };
     
-    const formatTime = (date: Date) => {
-        return new Date(date).toLocaleTimeString('en-US', { 
+    const formatTime = (timestamp: Date) => {
+        return new Date(timestamp).toLocaleTimeString('en-US', { 
             hour: 'numeric', 
             minute: '2-digit',
             hour12: true 
@@ -133,7 +141,7 @@ export default function HabitBox({ habit, entries, date }: Props) {
                             className={styles.valueInput}
                         />
                         <button
-                            onClick={addValueEntry}
+                            onClick={addTimedEntry}
                             type="button"
                             className={styles.addBtn}
                             aria-label="Add entry"
@@ -142,6 +150,15 @@ export default function HabitBox({ habit, entries, date }: Props) {
                             +
                         </button>
                     </div>
+                ) : type === "TALLY" ? (
+                    <button
+                        onClick={addTimedEntry}
+                        type="button"
+                        className={styles.addBtn}
+                        aria-label="Add tally"
+                    >
+                        +
+                    </button>
                 ) : (
                     <button
                         className={styles.squircleBtn}
@@ -155,11 +172,12 @@ export default function HabitBox({ habit, entries, date }: Props) {
                     </button>
                 )}
             </li>
-            {type === "VALUE" && localEntries.length > 0 && (
+            {(type === "VALUE" || type === "TALLY") && localEntries.length > 0 && (
                 <ul className={styles.entriesList}>
                     {localEntries.map((entry) => (
                         <li key={entry.id}>
-                            {formatTime(entry.date)} - Value: {entry.value}
+                            {formatTime(entry.timestamp)}
+                            {type === "VALUE" && ` - ${entry.value} ${habit.unit || ''}`}
                         </li>
                     ))}
                 </ul>
