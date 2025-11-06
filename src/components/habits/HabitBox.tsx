@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Habit, BooleanHabitEntry, TimedHabitEntry } from "@/generated/prisma/client.ts";
+import { Habit, HabitEntry } from "@/generated/prisma/client.ts";
 import styles from "./HabitBox.module.css";
 
 interface Props {
     habit: Habit;
     entries: {
-        booleanEntry?: BooleanHabitEntry;
-        timedEntries: TimedHabitEntry[];
+        entries: HabitEntry[];
     };
     date: string; // Current date for the entry (YYYY-MM-DD)
 }
@@ -16,13 +15,16 @@ interface Props {
 export default function HabitBox({ habit, entries, date }: Props) {
     const { name, description, type } = habit;
     
-    // For boolean habits
-    const booleanEntry = entries.booleanEntry;
+    // For boolean habits - check if there's any entry for today
+    const booleanEntry = type === "BOOLEAN" ? entries.entries[0] : undefined;
+    
+    // For timed habits - all entries for today
+    const timedEntries = type !== "BOOLEAN" ? entries.entries : [];
     
     // Optimistic UI state
     const [completed, setCompleted] = useState(!!booleanEntry);
     const [entryId, setEntryId] = useState(booleanEntry?.id);
-    const [localEntries, setLocalEntries] = useState(entries.timedEntries);
+    const [localEntries, setLocalEntries] = useState(timedEntries);
     const [inputValue, setInputValue] = useState<number>(1); // Default value for new entries
     
     // Debounce management for boolean habits only

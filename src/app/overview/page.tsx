@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma.ts";
 import styles from "./page.module.css";
+import { auth } from "../../auth.ts";
 
 function getStartOfLastWeek() {
     const now = new Date();
@@ -10,39 +11,63 @@ function getStartOfLastWeek() {
 }
 
 export default async function Page() {
+
+    const session = await auth();
+    if (!session) {
+        return <div>Please log in to view your habits overview.</div>;
+    }
+
+    if (!session.user) {
+        return <div>User information is missing in the session.</div>;
+    }
+
+
+    const userId = session.user?.id;
+
+    // Generate habit list and labels
+    const habits = await prisma.habit.findMany({
+        where: {
+            userId: userId,
+        },
+    });
+    const labels = habits.map(habit => habit.name);
+    
     const startOfLastWeek = getStartOfLastWeek();
 
-    // Get BooleanHabitEntries from the last week
-    const booleanEntries = await prisma.booleanHabitEntry.findMany({
+    // Dynamically generate last 7 days ending with today
+    const weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const todayIdx = new Date().getDay();
+    const daysOfWeek = Array.from({ length: 7 }, (_, i) => weekDays[(todayIdx + i + 1) % 7]);
+    
+    // Get all habit entries from the last week
+    const entriesThisWeek = await prisma.habitEntry.findMany({
         where: {
             date: {
                 gte: startOfLastWeek,
             },
         },
-    });
-
-    // Get TimedHabitEntries from the last week
-    const timedEntries = await prisma.timedHabitEntry.findMany({
-        where: {
-            timestamp: {
-                gte: startOfLastWeek,
-            },
+        include: {
+            habit: true,
         },
     });
 
-    // Combine all entries
-    const entriesThisWeek = [
-        ...booleanEntries.map((e) => ({ ...e, type: "BOOLEAN" })),
-        ...timedEntries.map((e) => ({ ...e, type: "TIMED" })),
-    ];
+    // Create a 2D array to hold the entries for the grid
+    const entries: (number)[][] = labels.map(() => Array(7).fill(0));
 
-    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const labels = ["First", "Second", "Third"]
-    const sampleData = [
-        [1, 0, 2, 1, 3, 0, 4],
-        [0, 1, 0, 2, 1, 0, 3],
-        [2, 2, 1, 0, 0, 1, 0],
-    ];
+    // Populate the entries array
+    entriesThisWeek.forEach(entry => {
+        const habitIdx = habits.findIndex(habit => habit.id === entry.habitId);
+        if (habitIdx === -1) return;
+        const entryDate = new Date(entry.date);
+        const dayDiff = Math.floor((entryDate.getTime() - startOfLastWeek.getTime()) / (1000 * 60 * 60 * 24));
+        if (dayDiff >= 0 && dayDiff < 7) {
+            if (entry.value) {
+                entries[habitIdx][dayDiff] += entry.value;
+            } else {
+                entries[habitIdx][dayDiff] += 1;
+            }
+        }
+    });
 
     return (
         <div>
@@ -57,14 +82,14 @@ export default async function Page() {
                     </div>
                 ))}
                 {/* Render each row: label + data */}
-                {sampleData.map((row, rowIdx) => (
+                {entries.map((row, rowIdx) => (
                     <>
                         <div key={"label-" + rowIdx} className={styles.gridItem} style={{ fontWeight: "bold" }}>
                             {labels[rowIdx]}
                         </div>
-                        {row.map((val, colIdx) => (
+                        {row.map((entrySum, colIdx) => (
                             <div key={`cell-${rowIdx}-${colIdx}`} className={styles.gridItem}>
-                                {val}
+                                {entrySum}
                             </div>
                         ))}
                     </>

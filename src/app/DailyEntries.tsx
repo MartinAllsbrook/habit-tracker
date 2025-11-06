@@ -2,12 +2,11 @@ import { prisma } from "@/lib/prisma.ts";
 import { auth } from "@/auth.ts";
 import Link from "next/link";
 import styles from "./DailyEntries.module.css";
-import { BooleanHabitEntry, TimedHabitEntry } from "@/generated/prisma/client.ts";
+import { HabitEntry } from "@/generated/prisma/client.ts";
 import HabitBox from "@/components/habits/HabitBox.tsx";
 
 export type HabitEntries = {
-    booleanEntry?: BooleanHabitEntry;
-    timedEntries: TimedHabitEntry[];
+    entries: HabitEntry[];
 };
 
 export default async function DailyEntries() {
@@ -26,44 +25,21 @@ export default async function DailyEntries() {
 
     const entriesByHabitId: Record<string, HabitEntries> = {};
     const todayDate = new Date(today);
-    const startOfDay = new Date(today);
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date(today);
-    endOfDay.setHours(23, 59, 59, 999);
+    todayDate.setHours(0, 0, 0, 0);
     
     for (const habit of userHabits) {
-        if (habit.type === 'BOOLEAN') {
-            // For boolean habits, get the single entry for today (date only)
-            const booleanEntry = await prisma.booleanHabitEntry.findUnique({
-                where: {
-                    habitId_date: {
-                        habitId: habit.id,
-                        date: todayDate,
-                    },
-                },
-            });
-            entriesByHabitId[habit.id] = {
-                booleanEntry: booleanEntry || undefined,
-                timedEntries: [],
-            };
-        } else {
-            // For VALUE and TALLY habits, get all timestamped entries for today
-            const timedEntries = await prisma.timedHabitEntry.findMany({
-                where: {
-                    habitId: habit.id,
-                    timestamp: {
-                        gte: startOfDay,
-                        lte: endOfDay,
-                    },
-                },
-                orderBy: {
-                    timestamp: 'desc',
-                },
-            });
-            entriesByHabitId[habit.id] = {
-                timedEntries,
-            };
-        }
+        // Get all entries for today
+        const entries = await prisma.habitEntry.findMany({
+            where: {
+                habitId: habit.id,
+                date: todayDate,
+            },
+            orderBy: {
+                timestamp: 'desc',
+            },
+        });
+        
+        entriesByHabitId[habit.id] = { entries };
     }
     
     return (
@@ -76,10 +52,10 @@ export default async function DailyEntries() {
             ) : (
                 <ul className={styles.dailyLog}>
                     {userHabits.map((habit) => 
-                        <HabitBox 
+                        <HabitBox
                             key={habit.id} 
                             habit={habit} 
-                            entries={entriesByHabitId[habit.id] || { timedEntries: [] }} 
+                            entries={entriesByHabitId[habit.id] || { entries: [] }} 
                             date={today}
                         />
                     )}

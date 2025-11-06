@@ -51,8 +51,8 @@ export async function PATCH(
             )
         }
 
-        // Verify the entry exists and belongs to this habit (timed entries only)
-        const existingEntry = await prisma.timedHabitEntry.findUnique({
+        // Verify the entry exists and belongs to this habit
+        const existingEntry = await prisma.habitEntry.findUnique({
             where: { id: entryId }
         })
 
@@ -108,7 +108,7 @@ export async function PATCH(
         }
 
         // Update the entry
-        const updatedEntry = await prisma.timedHabitEntry.update({
+        const updatedEntry = await prisma.habitEntry.update({
             where: { id: entryId },
             data: {
                 ...(value !== undefined && { value }),
@@ -162,56 +162,29 @@ export async function DELETE(
             )
         }
 
-        // Check which table to delete from based on habit type
-        if (habit.type === "BOOLEAN") {
-            // Verify the boolean entry exists and belongs to this habit
-            const existingEntry = await prisma.booleanHabitEntry.findUnique({
-                where: { id: entryId }
-            })
+        // Verify the entry exists and belongs to this habit
+        const existingEntry = await prisma.habitEntry.findUnique({
+            where: { id: entryId }
+        })
 
-            if (!existingEntry) {
-                return Response.json(
-                    { error: "Entry not found" },
-                    { status: 404 }
-                )
-            }
-
-            if (existingEntry.habitId !== habitId) {
-                return Response.json(
-                    { error: "Entry does not belong to this habit" },
-                    { status: 400 }
-                )
-            }
-
-            // Delete the boolean entry
-            await prisma.booleanHabitEntry.delete({
-                where: { id: entryId }
-            })
-        } else {
-            // Handle VALUE and TALLY habits
-            const existingEntry = await prisma.timedHabitEntry.findUnique({
-                where: { id: entryId }
-            })
-
-            if (!existingEntry) {
-                return Response.json(
-                    { error: "Entry not found" },
-                    { status: 404 }
-                )
-            }
-
-            if (existingEntry.habitId !== habitId) {
-                return Response.json(
-                    { error: "Entry does not belong to this habit" },
-                    { status: 400 }
-                )
-            }
-
-            // Delete the timed entry
-            await prisma.timedHabitEntry.delete({
-                where: { id: entryId }
-            })
+        if (!existingEntry) {
+            return Response.json(
+                { error: "Entry not found" },
+                { status: 404 }
+            )
         }
+
+        if (existingEntry.habitId !== habitId) {
+            return Response.json(
+                { error: "Entry does not belong to this habit" },
+                { status: 400 }
+            )
+        }
+
+        // Delete the entry
+        await prisma.habitEntry.delete({
+            where: { id: entryId }
+        })
 
         return Response.json(
             { message: "Entry deleted successfully" },

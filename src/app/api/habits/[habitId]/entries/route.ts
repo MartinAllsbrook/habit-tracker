@@ -2,14 +2,10 @@ import { NextRequest } from "next/server"
 import { auth } from "@/auth.ts"
 import { prisma } from "@/lib/prisma.ts"
 
-interface NewBooleanEntry {
-    date: string // ISO date string (e.g., "2025-11-04")
-    notes?: string | null
-}
-
-interface NewTimedEntry {
-    timestamp: string // ISO datetime string (e.g., "2025-11-04T14:30:00Z")
-    value?: number | null // For VALUE habits (required), null for TALLY habits
+interface NewHabitEntry {
+    date?: string // ISO date string (e.g., "2025-11-04") - for BOOLEAN habits
+    timestamp?: string // ISO datetime string (e.g., "2025-11-04T14:30:00Z") - for VALUE/TALLY habits
+    value?: number | null // For VALUE habits (required), null for TALLY and BOOLEAN habits
     notes?: string | null
 }
 
@@ -50,26 +46,28 @@ export async function POST(
         }
 
         // Parse request body
-        const body = await request.json()
+        const body = await request.json() as NewHabitEntry
+        const { date, timestamp, value, notes } = body
 
         if (habit.type === "BOOLEAN") {
             // Handle boolean habit entry
-            const { date, notes } = body as NewBooleanEntry
-
             if (!date) {
                 return Response.json(
-                    { error: "Date is required" },
+                    { error: "Date is required for boolean habits" },
                     { status: 400 }
                 )
             }
 
-            // Check if entry already exists for this date
-            const existingEntry = await prisma.booleanHabitEntry.findUnique({
+            const entryDate = new Date(date)
+            // Set timestamp to start of day for boolean entries
+            const entryTimestamp = new Date(date)
+            entryTimestamp.setHours(0, 0, 0, 0)
+
+            // Check if entry already exists for this date (application-level check)
+            const existingEntry = await prisma.habitEntry.findFirst({
                 where: {
-                    habitId_date: {
-                        habitId,
-                        date: new Date(date)
-                    }
+                    habitId,
+                    date: entryDate
                 }
             })
 
@@ -81,10 +79,12 @@ export async function POST(
             }
 
             // Create the boolean habit entry
-            const habitEntry = await prisma.booleanHabitEntry.create({
+            const habitEntry = await prisma.habitEntry.create({
                 data: {
                     habitId,
-                    date: new Date(date),
+                    date: entryDate,
+                    timestamp: entryTimestamp,
+                    value: null,
                     notes: notes ?? null
                 }
             })
@@ -92,11 +92,9 @@ export async function POST(
             return Response.json(habitEntry, { status: 201 })
         } else {
             // Handle VALUE or TALLY habit entry
-            const { timestamp, value, notes } = body as NewTimedEntry
-
             if (!timestamp) {
                 return Response.json(
-                    { error: "Timestamp is required" },
+                    { error: "Timestamp is required for value/tally habits" },
                     { status: 400 }
                 )
             }
@@ -124,11 +122,17 @@ export async function POST(
                 }
             }
 
+            const entryTimestamp = new Date(timestamp)
+            // Extract date from timestamp
+            const entryDate = new Date(timestamp)
+            entryDate.setHours(0, 0, 0, 0)
+
             // Create the timed habit entry
-            const habitEntry = await prisma.timedHabitEntry.create({
+            const habitEntry = await prisma.habitEntry.create({
                 data: {
                     habitId,
-                    timestamp: new Date(timestamp),
+                    date: entryDate,
+                    timestamp: entryTimestamp,
                     value: value ?? null,
                     notes: notes ?? null
                 }

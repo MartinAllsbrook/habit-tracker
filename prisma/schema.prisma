@@ -53,37 +53,28 @@ enum HabitType {
 }
 
 model Habit {
-  id             String              @id @default(cuid())
-  userId         String
-  name           String
-  description    String?
-  type           HabitType           @default(BOOLEAN)
-  unit           String?             // e.g., "kilometers", "minutes", "steps" (null for boolean/tally habits)
-  createdAt      DateTime            @default(now())
-  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  booleanEntries BooleanHabitEntry[]
-  timedEntries   TimedHabitEntry[]
+  id          String        @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  type        HabitType     @default(BOOLEAN)
+  unit        String?       // e.g., "kilometers", "minutes", "steps" (null for boolean/tally habits)
+  createdAt   DateTime      @default(now())
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entries     HabitEntry[]
 }
 
-// For BOOLEAN habits - one per day
-model BooleanHabitEntry {
-  id      String   @id @default(cuid())
-  habitId String
-  date    DateTime @db.Date // Date only, no time
-  notes   String?
-  habit   Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
-
-  @@unique([habitId, date]) // Enforces one entry per day
-}
-
-// For VALUE and TALLY habits - multiple per day with timestamps
-model TimedHabitEntry {
+// Unified model for all habit types
+model HabitEntry {
   id        String   @id @default(cuid())
   habitId   String
-  timestamp DateTime @default(now()) // Full timestamp
-  value     Float? // Required for VALUE, null for TALLY
+  date      DateTime @db.Date // Date for all entries (extracted from timestamp for timed entries)
+  timestamp DateTime @default(now()) // Full timestamp (for VALUE/TALLY, same as date start for BOOLEAN)
+  value     Float?   // Required for VALUE, null for TALLY and BOOLEAN
   notes     String?
   habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@index([habitId, date]) // Index for efficient date-based queries
 }
 
 model VerificationToken {
