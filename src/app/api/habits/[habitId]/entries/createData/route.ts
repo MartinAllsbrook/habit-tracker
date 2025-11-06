@@ -1,8 +1,9 @@
-import { NextRequest } from "next/server"
 import { auth } from "@/auth.ts"
 import { prisma } from "@/lib/prisma.ts"
 
-export async function POST(_request: NextRequest) {
+export async function POST() {
+    console.log("Received request to create dummy habit entries")
+
     try {
         // Authenticate the user
         const session = await auth()

@@ -19,6 +19,9 @@ export default function NavBar() {
                     <Link href="/habits">Manage Habits</Link>
                 </li>
                 <li>
+                    <Link href="/overview">Overview</Link>
+                </li>
+                <li>
                     <ProfileButton/>
                 </li>
                 
