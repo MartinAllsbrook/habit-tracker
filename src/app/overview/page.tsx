@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma.ts";
 import styles from "./page.module.css";
 import { auth } from "../../auth.ts";
+import { HabitEntry, HabitType } from "../../generated/prisma/client.ts";
 
 function getStartOfLastWeek() {
     const now = new Date();
@@ -30,14 +31,14 @@ export default async function Page() {
             userId: userId,
         },
     });
-    const labels = habits.map(habit => habit.name);
-    
+
+    const weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
     const startOfLastWeek = getStartOfLastWeek();
 
     // Dynamically generate last 7 days ending with today
-    const weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const todayIdx = new Date().getDay();
-    const daysOfWeek = Array.from({ length: 7 }, (_, i) => weekDays[(todayIdx + i + 1) % 7]);
+    const daysOfWeek = Array.from({ length: 7 }, (_, i) => (todayIdx + i + 1) % 7);
     
     // Get all habit entries from the last week
     const entriesThisWeek = await prisma.habitEntry.findMany({
@@ -52,19 +53,38 @@ export default async function Page() {
     });
 
     // Create a 2D array to hold the entries for the grid
-    const entries: (number)[][] = labels.map(() => Array(7).fill(0));
+    const entries: Record<string, {
+        type: HabitType, 
+        days: Record<number, number>,
+    }> = {};
+
+    habits.forEach(habit => {
+        entries[habit.id] = {
+            type: habit.type,
+            days: {},
+        };
+        
+        daysOfWeek.forEach(day => {
+            entries[habit.id].days[day] = 0;
+        });
+    });
+
+    const todaysDate = new Date().getDate();
 
     // Populate the entries array
     entriesThisWeek.forEach(entry => {
-        const habitIdx = habits.findIndex(habit => habit.id === entry.habitId);
-        if (habitIdx === -1) return;
-        const entryDate = new Date(entry.date);
-        const dayDiff = Math.floor((entryDate.getTime() - startOfLastWeek.getTime()) / (1000 * 60 * 60 * 24));
+        const entryDate = new Date(entry.timestamp);
+        const date = entryDate.getDate();
+        const dayDiff = (todaysDate - date);
+
         if (dayDiff >= 0 && dayDiff < 7) {
+            const id = entry.habitId;
+            const weekday = entryDate.getDay();
+            
             if (entry.value) {
-                entries[habitIdx][dayDiff] += entry.value;
+                entries[id].days[weekday] += entry.value;
             } else {
-                entries[habitIdx][dayDiff] += 1;
+                entries[id].days[weekday] += 1;
             }
         }
     });
@@ -75,23 +95,30 @@ export default async function Page() {
             <div className={styles.weeklyGrid}>
                 {/* Top-left empty cell */}
                 <div></div>
+
                 {/* Days of week as column headers */}
                 {daysOfWeek.map((day, idx) => (
-                    <div key={"header-" + idx} className={styles.gridItem} style={{ fontWeight: "bold" }}>
-                        {day}
+                    <div key={"header-" + idx} className={styles.gridItem}>
+                        {weekDays[day]}
                     </div>
                 ))}
+
                 {/* Render each row: label + data */}
-                {entries.map((row, rowIdx) => (
+                {habits.map((habit) => (
                     <>
-                        <div key={"label-" + rowIdx} className={styles.gridItem} style={{ fontWeight: "bold" }}>
-                            {labels[rowIdx]}
+                        
+                        <div key={"label-" + habit.id} className={styles.gridItem}>
+                            {habit.name}
                         </div>
-                        {row.map((entrySum, colIdx) => (
-                            <div key={`cell-${rowIdx}-${colIdx}`} className={styles.gridItem}>
-                                {entrySum}
-                            </div>
-                        ))}
+                        {entries[habit.id].type === HabitType.BOOLEAN ? (
+                            Object.values(entries[habit.id].days).map((value) => {return value > 0 ? (
+                                <div>Done</div>
+                            ) : (
+                                <div>Not Done</div>
+                            )}) 
+                        ) : (
+                            Object.values(entries[habit.id].days).map((value) => {return (<div>{value}</div>)})
+                        )}
                     </>
                 ))}
             </div>
