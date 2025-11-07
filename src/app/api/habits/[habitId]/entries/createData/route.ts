@@ -1,5 +1,6 @@
 import { auth } from "@/auth.ts"
 import { prisma } from "@/lib/prisma.ts"
+import { HabitEntryCreateManyInput } from "@/generated/prisma/models.ts";
 
 export async function POST() {
     console.log("Received request to create dummy habit entries")
@@ -61,7 +62,7 @@ export async function POST() {
         let totalEntriesCreated = 0
 
         for (const habit of createdHabits) {
-            const entriesForHabit = []
+            const entriesForHabit: HabitEntryCreateManyInput[] = []
 
             // Iterate through each day
             const d = new Date(startDate)
@@ -73,7 +74,6 @@ export async function POST() {
                     if (Math.random() > 0.3) {
                         entriesForHabit.push({
                             habitId: habit.id,
-                            date: currentDate,
                             timestamp: new Date(currentDate.setHours(12, 0, 0, 0)), // Noon
                             value: null,
                             notes: Math.random() > 0.7 ? `Completed on ${currentDate.toDateString()}` : null
@@ -92,7 +92,6 @@ export async function POST() {
                         if (habit.type === "TALLY") {
                             entriesForHabit.push({
                                 habitId: habit.id,
-                                date: new Date(currentDate.setHours(0, 0, 0, 0)),
                                 timestamp,
                                 value: null,
                                 notes: Math.random() > 0.8 ? "Quick tally" : null
@@ -102,7 +101,6 @@ export async function POST() {
                             const value = Math.floor(Math.random() * 100) + 1
                             entriesForHabit.push({
                                 habitId: habit.id,
-                                date: new Date(currentDate.setHours(0, 0, 0, 0)),
                                 timestamp,
                                 value,
                                 notes: Math.random() > 0.8 ? `Logged ${value} ${habit.unit}` : null

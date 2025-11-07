@@ -68,13 +68,10 @@ model Habit {
 model HabitEntry {
   id        String   @id @default(cuid())
   habitId   String
-  date      DateTime @db.Date // Date for all entries (extracted from timestamp for timed entries)
   timestamp DateTime @default(now()) // Full timestamp (for VALUE/TALLY, same as date start for BOOLEAN)
   value     Float?   // Required for VALUE, null for TALLY and BOOLEAN
   notes     String?
   habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
-
-  @@index([habitId, date]) // Index for efficient date-based queries
 }
 
 model VerificationToken {

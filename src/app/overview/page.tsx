@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma.ts";
 import styles from "./page.module.css";
-import { auth } from "../../auth.ts";
-import { HabitEntry, HabitType } from "../../generated/prisma/client.ts";
+import { auth } from "@/auth.ts";
+import { HabitType } from "@/generated/prisma/client.ts";
 
 function getStartOfLastWeek() {
     const now = new Date();
@@ -43,7 +43,7 @@ export default async function Page() {
     // Get all habit entries from the last week
     const entriesThisWeek = await prisma.habitEntry.findMany({
         where: {
-            date: {
+            timestamp: {
                 gte: startOfLastWeek,
             },
         },
@@ -68,8 +68,6 @@ export default async function Page() {
             entries[habit.id].days[day] = 0;
         });
     });
-
-    const todaysDate = new Date().getDate();
 
     // Populate the entries array
     entriesThisWeek.forEach(entry => {

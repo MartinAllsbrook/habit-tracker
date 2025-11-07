@@ -3,7 +3,6 @@ import { auth } from "@/auth.ts"
 import { prisma } from "@/lib/prisma.ts"
 
 interface NewHabitEntry {
-    date?: string // ISO date string (e.g., "2025-11-04") - for BOOLEAN habits
     timestamp?: string // ISO datetime string (e.g., "2025-11-04T14:30:00Z") - for VALUE/TALLY habits
     value?: number | null // For VALUE habits (required), null for TALLY and BOOLEAN habits
     notes?: string | null
@@ -47,27 +46,25 @@ export async function POST(
 
         // Parse request body
         const body = await request.json() as NewHabitEntry
-        const { date, timestamp, value, notes } = body
+        const { timestamp, value, notes } = body
+
+        if (!timestamp) {
+            return Response.json(
+                { error: "Timestamp is required" },
+                { status: 400 }
+            )
+        }
 
         if (habit.type === "BOOLEAN") {
-            // Handle boolean habit entry
-            if (!date) {
-                return Response.json(
-                    { error: "Date is required for boolean habits" },
-                    { status: 400 }
-                )
-            }
-
-            const entryDate = new Date(date)
-            // Set timestamp to start of day for boolean entries
-            const entryTimestamp = new Date(date)
-            entryTimestamp.setHours(0, 0, 0, 0)
+            // Set timestamp to 12pm UTC for boolean entries
+            const entryTimestamp = new Date(timestamp)
+            entryTimestamp.setUTCHours(12, 0, 0, 0)
 
             // Check if entry already exists for this date (application-level check)
             const existingEntry = await prisma.habitEntry.findFirst({
                 where: {
                     habitId,
-                    date: entryDate
+                    timestamp: entryTimestamp
                 }
             })
 
@@ -82,7 +79,6 @@ export async function POST(
             const habitEntry = await prisma.habitEntry.create({
                 data: {
                     habitId,
-                    date: entryDate,
                     timestamp: entryTimestamp,
                     value: null,
                     notes: notes ?? null
@@ -123,15 +119,11 @@ export async function POST(
             }
 
             const entryTimestamp = new Date(timestamp)
-            // Extract date from timestamp
-            const entryDate = new Date(timestamp)
-            entryDate.setHours(0, 0, 0, 0)
 
             // Create the timed habit entry
             const habitEntry = await prisma.habitEntry.create({
                 data: {
                     habitId,
-                    date: entryDate,
                     timestamp: entryTimestamp,
                     value: value ?? null,
                     notes: notes ?? null

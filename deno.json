@@ -31,6 +31,7 @@
         "prisma-all": "deno run -A npm:prisma migrate dev && deno run -A npm:prisma generate",
         "prisma-migrate": "deno run -A npm:prisma migrate dev",
         "prisma-generate": "deno run -A npm:prisma generate",
+        "prisma-studio": "deno run -A npm:prisma studio",
         "check": "deno check src",
         "build-and-push": "deno task build && powershell -Command \"if ($?) { git add -A; $msg = Read-Host 'Enter commit message'; git commit -m \\\"$msg\\\"; git push }\""
     },

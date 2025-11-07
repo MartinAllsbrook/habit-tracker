@@ -23,23 +23,26 @@ export default async function DailyEntries() {
         where: { userId }
     })
 
+    // Get midnight local time for today
+    const now = new Date();
+    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    // Get all entries for user's habits since midnight
+    const habitIds = userHabits.map(h => h.id);
+    const allEntries = await prisma.habitEntry.findMany({
+        where: {
+            habitId: { in: habitIds },
+            timestamp: { gte: midnight },
+        },
+        orderBy: {
+            timestamp: 'desc',
+        },
+    });
+
+    // Group entries by habitId
     const entriesByHabitId: Record<string, HabitEntries> = {};
-    const todaysDate = new Date(today);
-    todaysDate.setHours(0, 0, 0, 0);
-    
-    for (const habit of userHabits) {
-        // Get all entries for today
-        const entries = await prisma.habitEntry.findMany({
-            where: {
-                habitId: habit.id,
-                date: todaysDate,
-            },
-            orderBy: {
-                timestamp: 'desc',
-            },
-        });
-        
-        entriesByHabitId[habit.id] = { entries };
+    for (const habitId of habitIds) {
+        entriesByHabitId[habitId] = { entries: allEntries.filter(e => e.habitId === habitId) };
     }
     
     return (
