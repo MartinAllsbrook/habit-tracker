@@ -24,15 +24,15 @@ export default async function DailyEntries() {
     })
 
     const entriesByHabitId: Record<string, HabitEntries> = {};
-    const todayDate = new Date(today);
-    todayDate.setHours(0, 0, 0, 0);
+    const todaysDate = new Date(today);
+    todaysDate.setHours(0, 0, 0, 0);
     
     for (const habit of userHabits) {
         // Get all entries for today
         const entries = await prisma.habitEntry.findMany({
             where: {
                 habitId: habit.id,
-                date: todayDate,
+                date: todaysDate,
             },
             orderBy: {
                 timestamp: 'desc',

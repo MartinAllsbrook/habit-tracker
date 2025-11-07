@@ -74,18 +74,14 @@ export default async function Page() {
     // Populate the entries array
     entriesThisWeek.forEach(entry => {
         const entryDate = new Date(entry.timestamp);
-        const date = entryDate.getDate();
-        const dayDiff = (todaysDate - date);
 
-        if (dayDiff >= 0 && dayDiff < 7) {
-            const id = entry.habitId;
-            const weekday = entryDate.getDay();
-            
-            if (entry.value) {
-                entries[id].days[weekday] += entry.value;
-            } else {
-                entries[id].days[weekday] += 1;
-            }
+        const id = entry.habitId;
+        const weekday = entryDate.getDay();
+        
+        if (entry.value) {
+            entries[id].days[weekday] += entry.value;
+        } else {
+            entries[id].days[weekday] += 1;
         }
     });
 
@@ -98,7 +94,7 @@ export default async function Page() {
 
                 {/* Days of week as column headers */}
                 {daysOfWeek.map((day, idx) => (
-                    <div key={"header-" + idx} className={styles.gridItem}>
+                    <div key={"header-" + idx} className={styles.gridItem + " " + styles.gridHeader}>
                         {weekDays[day]}
                     </div>
                 ))}
@@ -107,22 +103,25 @@ export default async function Page() {
                 {habits.map((habit) => (
                     <>
                         
-                        <div key={"label-" + habit.id} className={styles.gridItem}>
+                        <div key={"label-" + habit.id} className={styles.gridItem + " " + styles.gridHeader}>
                             {habit.name}
                         </div>
                         {entries[habit.id].type === HabitType.BOOLEAN ? (
                             Object.values(entries[habit.id].days).map((value) => {return value > 0 ? (
-                                <div>Done</div>
+                                <div className={styles.gridItem}>★</div>
                             ) : (
-                                <div>Not Done</div>
+                                <div className={styles.gridItem}></div>
                             )}) 
                         ) : (
-                            Object.values(entries[habit.id].days).map((value) => {return (<div>{value}</div>)})
+                            Object.values(entries[habit.id].days).map((value) => {return value > 0 ? (
+                                <div className={styles.gridItem}>{value}</div>
+                            ) : (
+                                <div className={styles.gridItem}></div>
+                            )})
                         )}
                     </>
                 ))}
             </div>
-            <pre>{JSON.stringify(entriesThisWeek, null, 2)}</pre>
         </div>
     );
 }
