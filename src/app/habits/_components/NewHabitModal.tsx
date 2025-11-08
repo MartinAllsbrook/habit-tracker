@@ -1,6 +1,6 @@
 'use client';
 
-import { createHabit } from './actions.ts';
+import { createHabit } from '../actions.ts';
 import styles from './NewHabitModal.module.css';
 import { useRouter } from 'next/navigation';
 
